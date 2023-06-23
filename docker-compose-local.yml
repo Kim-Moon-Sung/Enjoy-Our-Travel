@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  eot-redis:
+    container_name: eot-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: moonsungkim/eot-redis
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    platform: linux/amd64
+    ports:
+      - "6379:6379"
+  eot-database:
+    container_name: eot-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: moonsungkim/eot-database
+    platform: linux/arm64
+    environment:
+      - MYSQL_DATABASE=eot
+      - MYSQL_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - TZ=Asia/Seoul
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    restart: always
