@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,9 +32,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().regexMatchers("^(?!/api/).*")
-                .antMatchers(HttpMethod.POST, "/api/*/users/join", "/api/*/users/login");
+    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+        return http.requestMatchers(matchers -> matchers.regexMatchers("^(?!/api/).*")
+                        .antMatchers(HttpMethod.GET, "/")
+                        .antMatchers(HttpMethod.POST, "/api/*/users/join", "/api/*/users/login"))
+                .authorizeRequests(auth -> auth.anyRequest().permitAll())
+                .requestCache(RequestCacheConfigurer::disable)
+                .securityContext(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                .build();
     }
 
     @Bean
