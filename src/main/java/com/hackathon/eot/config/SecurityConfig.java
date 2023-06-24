@@ -1,6 +1,6 @@
 package com.hackathon.eot.config;
 
-import com.hackathon.eot.config.filter.JwtTokenFiler;
+import com.hackathon.eot.config.filter.JwtTokenFilter;
 import com.hackathon.eot.config.util.CustomUserService;
 import com.hackathon.eot.exception.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtTokenFiler(key, customUserService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(key, customUserService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
