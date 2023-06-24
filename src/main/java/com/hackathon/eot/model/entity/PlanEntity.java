@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "plan")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class PlanEntity {
+public class PlanEntity extends AuditingFields {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
