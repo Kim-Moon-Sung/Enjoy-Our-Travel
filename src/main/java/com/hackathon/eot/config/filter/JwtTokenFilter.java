@@ -39,7 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             token = header.split(" ")[1].trim();
 
             if(JwtTokenUtils.isExpired(token, key)) {
-                log.error("Ket us expired");
+                log.error("Key us expired");
                 filterChain.doFilter(request, response);
                 return;
             }
