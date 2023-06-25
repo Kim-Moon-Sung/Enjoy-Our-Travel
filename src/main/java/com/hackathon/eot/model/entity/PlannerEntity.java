@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Table(name = "planner")
@@ -22,6 +24,9 @@ public class PlannerEntity extends AuditingFields {
     @Column(name = "title")
     private String title;
 
+    @OneToMany(mappedBy = "planner")
+    private List<ArticleEntity> articles = new ArrayList<>();
+
     private PlannerEntity(UserAccount userAccount, String title) {
         this.user = userAccount;
         this.title = title;
@@ -29,5 +34,12 @@ public class PlannerEntity extends AuditingFields {
 
     public static PlannerEntity of(UserAccount userAccount, String title) {
         return new PlannerEntity(userAccount, title);
+    }
+
+    public void addArticle(ArticleEntity article) {
+        this.articles.add(article);
+
+        if(article.getPlanner() != this)
+            article.setPlanner(this);
     }
 }

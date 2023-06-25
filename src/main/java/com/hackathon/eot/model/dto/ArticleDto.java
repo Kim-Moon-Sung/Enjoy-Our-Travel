@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -15,15 +17,16 @@ public class ArticleDto {
     private Long plannerId;
     private String title;
     private String content;
+    private List<ImageDto> images;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public static ArticleDto of(User user, Long plannerId, String title, String content) {
-        return new ArticleDto(null, user, plannerId, title, content, null, null);
+    public static ArticleDto of(User user, Long plannerId, String title, String content, List<ImageDto> images) {
+        return new ArticleDto(null, user, plannerId, title, content, images, null, null);
     }
 
-    public static ArticleDto of(Long id, User user, Long plannerId, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        return new ArticleDto(id, user, plannerId, title, content, createdAt, modifiedAt);
+    public static ArticleDto of(Long id, User user, Long plannerId, String title, String content, List<ImageDto> images, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new ArticleDto(id, user, plannerId, title, content, images, createdAt, modifiedAt);
     }
 
     public static ArticleDto fromEntity(ArticleEntity entity) {
@@ -33,6 +36,7 @@ public class ArticleDto {
                 entity.getPlanner().getId(),
                 entity.getTitle(),
                 entity.getContent(),
+                entity.getImages().stream().map(ImageDto::fromEntity).collect(Collectors.toList()),
                 entity.getCreatedAt(),
                 entity.getModifiedAt()
         );
