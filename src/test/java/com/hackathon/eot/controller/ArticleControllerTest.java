@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -61,5 +62,29 @@ class ArticleControllerTest {
                         .param("content", content)
                 ).andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("[POST] 게시글 컨트롤러 테스트 - 게시글 작성 시 로그인하지 않은 경우")
+    @WithAnonymousUser
+    @Test
+    public void article_post_noLogin() throws Exception {
+        // given & when
+        String title = "test title";
+        String content = "test content";
+
+        String fileName = "testImage";
+        String contentType = "jpeg";
+        String filePath = "src/test/resources/testImage/" + fileName + "." + contentType;
+        FileInputStream fileInputStream = new FileInputStream(filePath);
+
+        MockMultipartFile file = new MockMultipartFile("images", fileName+"."+contentType, contentType, fileInputStream);
+
+        // then
+        mvc.perform(multipart("/api/articles")
+                        .file(file)
+                        .param("title", title)
+                        .param("content", content)
+                ).andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }
