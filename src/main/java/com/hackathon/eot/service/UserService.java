@@ -1,6 +1,5 @@
 package com.hackathon.eot.service;
 
-import com.hackathon.eot.config.util.CustomUserService;
 import com.hackathon.eot.dto.request.UserJoinRequest;
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final CustomUserService customUserService;
     private final UserAccountRepository userAccountRepository;
 
     @Transactional
