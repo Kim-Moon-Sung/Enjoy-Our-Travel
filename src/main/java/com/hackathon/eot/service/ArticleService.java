@@ -2,7 +2,6 @@ package com.hackathon.eot.service;
 
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
-import com.hackathon.eot.model.dto.ArticleDto;
 import com.hackathon.eot.model.entity.ArticleEntity;
 import com.hackathon.eot.model.entity.CommentEntity;
 import com.hackathon.eot.model.entity.ImageEntity;
