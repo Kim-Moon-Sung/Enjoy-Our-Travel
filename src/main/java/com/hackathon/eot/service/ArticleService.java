@@ -2,11 +2,12 @@ package com.hackathon.eot.service;
 
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
-import com.hackathon.eot.model.dto.ArticleDto;
 import com.hackathon.eot.model.entity.ArticleEntity;
+import com.hackathon.eot.model.entity.CommentEntity;
 import com.hackathon.eot.model.entity.ImageEntity;
 import com.hackathon.eot.model.entity.UserAccount;
 import com.hackathon.eot.repository.ArticleRepository;
+import com.hackathon.eot.repository.CommentRepository;
 import com.hackathon.eot.repository.ImageRepository;
 import com.hackathon.eot.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ArticleService {
 
     private final UserAccountRepository userAccountRepository;
     private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
     private final FileHandler fileHandler;
 
@@ -42,5 +44,15 @@ public class ArticleService {
         }
 
         articleRepository.save(article);
+    }
+
+    @Transactional
+    public void comment(Long articleId, String userAccountId, String content) {
+        ArticleEntity article = articleRepository.findById(articleId).orElseThrow(
+                () -> new EotApplicationException(ErrorCode.POST_NOT_FOUND));
+        UserAccount user = userAccountRepository.findByUserAccountId(userAccountId)
+                .orElseThrow(() -> new EotApplicationException(ErrorCode.USER_NOT_FOUND));
+
+        commentRepository.save(CommentEntity.of(article, user, content));
     }
 }
