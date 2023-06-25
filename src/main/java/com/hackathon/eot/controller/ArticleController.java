@@ -3,6 +3,7 @@ package com.hackathon.eot.controller;
 import com.hackathon.eot.dto.request.ArticleCreateRequest;
 import com.hackathon.eot.dto.request.PostCommentRequest;
 import com.hackathon.eot.dto.response.ArticleResponse;
+import com.hackathon.eot.dto.response.CommentResponse;
 import com.hackathon.eot.dto.response.Response;
 import com.hackathon.eot.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,11 @@ public class ArticleController {
     @GetMapping("/{articleId}")
     public Response<ArticleResponse> article(@PathVariable Long articleId) {
         return Response.success(ArticleResponse.fromArticleDto(articleService.article(articleId)));
+    }
+
+    @GetMapping("/{articleId}/comments")
+    public Response<Page<CommentResponse>> comments(@PathVariable Long articleId, Pageable pageable) {
+        return Response.success(articleService.comments(articleId, pageable).map(CommentResponse::fromCommentDto));
     }
 
     @PostMapping("/{articleId}/comments")

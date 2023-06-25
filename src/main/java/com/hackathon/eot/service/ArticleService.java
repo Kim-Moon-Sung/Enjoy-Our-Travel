@@ -3,6 +3,7 @@ package com.hackathon.eot.service;
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
 import com.hackathon.eot.model.dto.ArticleDto;
+import com.hackathon.eot.model.dto.CommentDto;
 import com.hackathon.eot.model.entity.ArticleEntity;
 import com.hackathon.eot.model.entity.CommentEntity;
 import com.hackathon.eot.model.entity.ImageEntity;
@@ -57,6 +58,12 @@ public class ArticleService {
         return articleRepository.findById(articleId)
                 .map(ArticleDto::fromEntity)
                 .orElseThrow(() -> new EotApplicationException(ErrorCode.POST_NOT_FOUND));
+    }
+
+    public Page<CommentDto> comments(Long articleId, Pageable pageable) {
+        ArticleEntity article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new EotApplicationException(ErrorCode.POST_NOT_FOUND));
+        return commentRepository.findAllByArticle(article, pageable).map(CommentDto::fromEntity);
     }
 
     @Transactional
