@@ -2,6 +2,7 @@ package com.hackathon.eot.service;
 
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
+import com.hackathon.eot.model.constant.Gender;
 import com.hackathon.eot.model.entity.ArticleEntity;
 import com.hackathon.eot.model.entity.UserAccount;
 import com.hackathon.eot.repository.ArticleRepository;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +71,42 @@ class ArticleServiceTest {
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
+    @DisplayName("게시글 조회 - 전체 게시글 목록 조회")
+    @Test
+    public void get_articles() {
+        Pageable pageable = mock(Pageable.class);
+        when(articleRepository.findAll(pageable)).thenReturn(Page.empty());
+        Assertions.assertDoesNotThrow(() -> articleService.articles(pageable));
+    }
+
+    @DisplayName("게시글 조회 - 상세 게시글 조회")
+    @Test
+    public void get_article() {
+        // given
+        Long articleId = 1L;
+        ArticleEntity articleEntity = createArticle();
+
+        // when
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
+
+        // then
+        Assertions.assertDoesNotThrow(() -> articleService.article(articleId));
+    }
+
+    @DisplayName("게시글 조회 - 상세 게시글 조회 시 게시글이 없는 경우")
+    @Test
+    public void get_article_no_exist_article() {
+        // given
+        Long articleId = 1L;
+
+        // when
+        when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
+
+        // then
+        EotApplicationException e = assertThrows(EotApplicationException.class, () -> articleService.article(articleId));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
     @DisplayName("댓글 작성 - 성공")
     @Test
     public void post_comment_success() {
@@ -113,5 +153,28 @@ class ArticleServiceTest {
         // then
         EotApplicationException e = assertThrows(EotApplicationException.class, () -> articleService.comment(articleId, userAccountId, content));
         Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    private ArticleEntity createArticle() {
+        ArticleEntity articleEntity = ArticleEntity.of(
+                createUserAccount(),
+                "title",
+                "content"
+        );
+        ReflectionTestUtils.setField(articleEntity, "id", 1L);
+        return articleEntity;
+    }
+
+    private UserAccount createUserAccount() {
+        UserAccount user = UserAccount.of(
+                "testId",
+                "testPw",
+                "name",
+                "nick",
+                "1990-12-01",
+                Gender.MALE,
+                "서울특별시 강동구");
+        ReflectionTestUtils.setField(user, "id", 1L);
+        return user;
     }
 }
