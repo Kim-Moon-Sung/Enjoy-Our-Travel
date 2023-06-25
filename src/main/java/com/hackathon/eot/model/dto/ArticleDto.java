@@ -33,7 +33,7 @@ public class ArticleDto {
         return new ArticleDto(
                 entity.getId(),
                 User.fromEntity(entity.getUser()),
-                entity.getPlanner().getId(),
+                entity.getPlanner()==null?null:entity.getPlanner().getId(),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.getImages().stream().map(ImageDto::fromEntity).collect(Collectors.toList()),
