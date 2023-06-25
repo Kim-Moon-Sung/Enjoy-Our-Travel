@@ -116,7 +116,7 @@ class UserControllerTest {
 
     @DisplayName("[POST] 유저 컨트롤러 테스트 - 로그인 시 잘못된 패스워드 입력 시에 에러 반환")
     @Test
-    public void login_invalidate_password() throws Exception {
+    public void login_wrong_password() throws Exception {
         // given & when
         String userAccountId = "testId";
         String password = "password";

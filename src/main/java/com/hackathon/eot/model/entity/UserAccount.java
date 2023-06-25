@@ -51,7 +51,22 @@ public class UserAccount extends AuditingFields {
         this.address = address;
     }
 
+    private UserAccount(Long id, String userAccountId, String password, String name, String nickname, String birthday, Gender gender, String address) {
+        this.id = id;
+        this.userAccountId = userAccountId;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.address = address;
+    }
+
     public static UserAccount of(String userAccountId, String password, String name, String nickname, String birthday, Gender gender, String address) {
         return new UserAccount(userAccountId, password, name, nickname, birthday, gender, address);
+    }
+
+    public static UserAccount getTestUser(Long id, String userAccountId, String password, String name, String nickname, String birthday, Gender gender, String address) {
+        return new UserAccount(id, userAccountId, password, name, nickname, birthday, gender, address);
     }
 }
