@@ -107,6 +107,34 @@ class ArticleServiceTest {
         Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
     }
 
+    @DisplayName("댓글 조회 - 성공")
+    @Test
+    public void get_comments() {
+        // given
+        Long articleId = 1L;
+        ArticleEntity articleEntity = createArticle();
+        Pageable pageable = mock(Pageable.class);
+
+        // when
+        when(articleRepository.findById(articleId)).thenReturn(Optional.of(articleEntity));
+        when(commentRepository.findAllByArticle(articleEntity, pageable)).thenReturn(Page.empty());
+
+        // then
+        Assertions.assertDoesNotThrow(() -> articleService.comments(articleId, pageable));
+    }
+
+    @DisplayName("댓글 조회 - 댓글 조회 시 게시글이 없는 경우")
+    @Test
+    public void get_comments_no_exist_article() {
+        // given
+        Long articleId = 1L;
+        Pageable pageable = mock(Pageable.class);
+
+        // when & then
+        EotApplicationException e = assertThrows(EotApplicationException.class, () -> articleService.comments(articleId, pageable));
+        Assertions.assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
     @DisplayName("댓글 작성 - 성공")
     @Test
     public void post_comment_success() {
