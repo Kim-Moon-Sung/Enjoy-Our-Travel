@@ -2,6 +2,7 @@ package com.hackathon.eot.config.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import java.nio.charset.StandardCharsets;
@@ -22,6 +23,18 @@ public class JwtTokenUtils {
     private static Claims extractClaims(String token, String key) {
         return Jwts.parserBuilder().setSigningKey(getKey(key))
                 .build().parseClaimsJws(token).getBody();
+    }
+
+    public static String generateToken(String userAccountId, String key, long expiredTimeMs) {
+        Claims claims = Jwts.claims();
+        claims.put("userName", userAccountId);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
+                .signWith(getKey(key), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private static Key getKey(String key) {
