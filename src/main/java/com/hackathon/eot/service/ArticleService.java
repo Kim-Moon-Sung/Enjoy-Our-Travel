@@ -1,5 +1,6 @@
 package com.hackathon.eot.service;
 
+import com.hackathon.eot.api.ImageVariationService;
 import com.hackathon.eot.exception.EotApplicationException;
 import com.hackathon.eot.exception.ErrorCode;
 import com.hackathon.eot.model.dto.ArticleDto;
@@ -31,6 +32,8 @@ public class ArticleService {
     private final ImageRepository imageRepository;
     private final FileHandler fileHandler;
 
+    private final ImageVariationService imageVariationService;
+
     @Transactional
     public void create(String title, String content, String userAccountId, List<MultipartFile> files) throws Exception {
         UserAccount user = userAccountRepository.findByUserAccountId(userAccountId)
@@ -46,6 +49,8 @@ public class ArticleService {
             }
             imageRepository.saveAll(images);
         }
+
+        imageVariationService.createImage(images.get(0).getFilePath());
 
         articleRepository.save(article);
     }
